@@ -61,8 +61,6 @@ def min_energy_to_build_wall_backtrackR(heights, c, d, m, cost, mask, min_energy
 
     return min(construct_cost, destruct_cost, move_cost)
 
-
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 print("Prueba del código Backtrack")
 heights = [5, 3, 4, 6, 3]
 c = 2
@@ -71,8 +69,6 @@ m = 1
 
 energia_minima = min_energy_to_build_wall_backtrack(heights, c, d, m)
 print(f"Energia minima: {energia_minima}")
-
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 
 heights = [1, 3, 2, 2, 5, 1, 3, 1, 4, 5]
 c = 3

@@ -56,7 +56,7 @@ def min_energy_to_build_wall(heights, c, d, m):
     return cost
 
 
-print("Version 1")
+print("Versión 1")
 heights = [5, 3, 4, 6, 3]
 c = 2
 d = 3
@@ -65,8 +65,6 @@ m = 1
 energia_minima = min_energy_to_build_wall(heights, c, d, m)
 print(f"Energia minima: {energia_minima}")  # Energia minima: 5
 
-
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 heights = [8, 8, 1, 8, 3, 8, 0, 8]
 c = 10
 d = 10
@@ -75,7 +73,6 @@ m = 19
 energia_minima = min_energy_to_build_wall(heights, c, d, m)
 print(f"Energia minima: {energia_minima}")  # Energia minima: 200
 
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 heights = [1, 3, 2, 2, 5, 1, 3, 1, 4, 5]
 c = 3
 d = 1

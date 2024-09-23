@@ -13,8 +13,6 @@ def min_energy_to_build_wall_heights(heights, c, d, m):
             else:
                 const_count += h - column
 
-        print("h ", h, "Const count ", const_count, "Dest count ", dest_count)
-
         if m < c + d:
             move_count = min(dest_count, const_count)
             dest_count -= move_count
@@ -29,10 +27,6 @@ def min_energy_to_build_wall_heights(heights, c, d, m):
     print("Best combination ", best_combination)
     return best_cost
 
-
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
-
 print("Prueba del código Heights")
 heights = [5, 3, 4, 6, 3]
 c = 2
@@ -42,8 +36,6 @@ m = 1
 energia_minima = min_energy_to_build_wall_heights(heights, c, d, m)
 print(f"Energia minima: {energia_minima}")
 
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
-
 heights = [8, 8, 1, 8, 3, 8, 0, 8]
 c = 10
 d = 10
@@ -51,8 +43,6 @@ m = 19
 
 energia_minima = min_energy_to_build_wall_heights(heights, c, d, m)
 print(f"Energia minima: {energia_minima}")
-
-print("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 
 heights = [1, 3, 2, 2, 5, 1, 3, 1, 4, 5]
 c = 3
