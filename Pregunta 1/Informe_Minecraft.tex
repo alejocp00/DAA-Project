@@ -68,7 +68,7 @@ Mover bloques hacia arriba o hacia los lados no tiene sentido. Supongamos que qu
 	\item \textbf{Caso 2:} La altura óptima $h_0 \geq f_0$. En este caso, todos los bloques por encima, incluidos los de la fila $f_0$, tendrán que ser construidos para alcanzar la altura óptima, por lo que también se gasta energía innecesariamente al mover bloques.
 \end{itemize}
 
-\section{Correctitud}
+\section{Primera solución. Correctitud}
 
 El algoritmo es correcto si, para cualquier configuración de alturas iniciales y costos de energía $c$, $d$ y $m$, produce un costo mínimo para nivelar las alturas de las columnas. En cada iteración, evaluando el costo de cada acción, se decide si es más barato disminuir las columnas más altas o aumentar las columnas más bajas. Como esta decisión también es la mejor en una solución final, al repetir hasta que las columnas tengan la misma altura, se puede concluir que se obtiene un costo mínimo para nivelar el muro. La terminación del algoritmo está garantizada porque, como en cada iteración se reduce la diferencia entre la altura máxima $h_{\text{max}}$ y la mínima $h_{\text{min}}$, eventualmente sucederá que $h_{\text{max}} = h_{\text{min}} = h_0$.
 
@@ -297,10 +297,10 @@ Por lo tanto, siempre se cumple que:
 crtf(piso) \leq cvf(piso) \quad \text{o} \quad cvtf(tope) \leq crf(tope) \quad \text{lqqd}.
 \]
 
-\section{Conclusiones}
+\subsection{Conclusiones}
 Dado que siempre se cumple la premisa del Lema 1 para la fila \textit{piso}, o la premisa del Lema 2 para la fila \textit{tope}, entonces en cada iteración del problema se puede determinar el estado de una de estas filas en una solución óptima. Esto garantiza la convergencia hacia dicha solución.
 
-\section{Implementación de Soluciones}
+\section{Implementación de la primera solución}
 
 Se han implementado dos soluciones basándose en la demostración:
 
@@ -362,7 +362,7 @@ La función \texttt{min\_energy\_to\_build\_wall} tiene como objetivo igualar la
 	\item Al final, se calcula y se devuelve el costo total.
 \end{itemize}
 
-\subsection{Complejidad Temporal}
+\subsubsection{Complejidad Temporal}
 
 La complejidad temporal del algoritmo depende de la cantidad de iteraciones del bucle principal y de las operaciones realizadas dentro de él:
 
@@ -377,7 +377,7 @@ La complejidad temporal del algoritmo depende de la cantidad de iteraciones del 
 
 Por lo tanto, la complejidad temporal total es \( O(H \cdot n) \).
 
-\subsection{Complejidad Espacial}
+\subsubsection{Complejidad Espacial}
 
 La complejidad espacial adicional del algoritmo es \( O(1) \) porque no se utilizan estructuras de datos adicionales que escalen con la entrada, ya que la lista \texttt{heights} se modifica, pero no se crea ninguna lista nueva que dependa de la entrada. El algoritmo recibe un arreglo para almacenar las alturas de las columnas, lo que requiere \( O(n) \) de espacio. La complejidad espacial total es \( O(n) \).
 
@@ -443,7 +443,7 @@ El código \texttt{min\_energy\_to\_build\_wall\_optimized} optimiza el costo en
 	\item \texttt{floor\_missing\_count = len(heights) - row\_block\_count[min\_height + 1]}: Esta línea calcula cuántas columnas están por debajo de la altura mínima + 1 y, por lo tanto, necesitan ser rellenadas (es decir, necesitan que se les construyan más bloques). \texttt{row\_block\_count[min\_height + 1]} nos dice cuántas columnas tienen altura mayor o igual a \texttt{min\_height + 1}. Si restamos este valor del número total de columnas (\texttt{len(heights)}), obtenemos el número de columnas cuya altura es menor o igual a \texttt{min\_height}.
 \end{itemize}
 
-\subsection{Complejidad Temporal}
+\subsubsection{Complejidad Temporal}
 
 \begin{itemize}
 	\item \texttt{max\_height = max(heights)} y \texttt{min\_height = min(heights)} tardan \(O(n)\), donde \(n\) es el número de columnas en \texttt{heights}.
@@ -458,13 +458,183 @@ Por lo tanto, la complejidad del bucle principal es \(O(h_{\text{max}} - h_{\tex
 
 \textbf{Complejidad total:} La complejidad total es \(O(n + h_{\text{max}})\).
 
-\subsection{Complejidad Espacial}
+\subsubsection{Complejidad Espacial}
 
 El espacio para el arreglo \texttt{row\_block\_count}:
 El espacio adicional más significativo es el arreglo \texttt{row\_block\_count}, que tiene un tamaño \(O(h_{\text{max}})\), donde \(h_{\text{max}}\) es la altura máxima de las columnas.
 
 \textbf{Complejidad espacial total:}
 Es \(O(h_{\text{max}} + n)\) teniendo en cuenta el espacio de la entrada.
+
+\section{Solución alternativa}
+
+\subsection{Datos}
+
+\begin{itemize}
+	\item \(n\): array de enteros que cada valor de cada $a_{i}$ representa la altura en la columna \(i\)
+	\item \(c\), \(d\), \(m\): representan el gasto energético de realizar dicha acción
+\end{itemize}
+
+\subsection{Objetivo}
+Encontrar una estrategia que transforme el muro inicial en un muro de altura uniforme con el mínimo costo de energía.
+
+\subsection{Análisis}
+
+Para cumplir con nuestro objetivo de construir un muro uniforme tenemos que saber cuál sería la altura, llamaremos \(H\) a la altura final de todas las columnas.
+Este \(H\) tendrá que cumplir que:
+
+\[min(n) \leq H \leq max(n)\]
+
+No tendría sentido ser mayor o menor que estos ya que tendría que consumir n$\times$c energía en construir una hilera más de bloques de piedra o en el otro caso consumir n$\times$d energía en destruir una hilera.
+
+Teniendo esto en cuenta comencemos a analizar el problema.
+Dado \(H\) podemos conocer que en el muro base tenemos columnas que la sobrepasan o están por debajo de ella.
+
+Ahora queremos conocer la diferencia de altura que existen en las columnas respecto a \(H\). Obtenemos dos valores que respresentan los bloques sobrantes y los bloques faltantes respecto a \(H\).
+
+\[S(H) = \sum_{i=0}^{n} max(0,a_i - H)\]
+\[F(H) = \sum_{i=0}^{n} max(0,H - a_i)\]
+
+En la sumatoria nos quedamos con el máximo entre 0 y la diferencia para evitar números negativos. El 0 representaría que no sobran ni faltan bloques en la columna \(i\) dependiendo de \(S(H)\) o \(F(H)\).
+
+Ya teniendo estos valores podemos conocer cuántos bloques se pueden mover de los sobrantes a los faltantes. Sea este valor
+
+\[x=min(S(H),F(H))\]
+
+\begin{itemize}
+	\item \(S(H)\) $>$ \(F(H)\): estos bloques restantes no se pueden mover por lo que se tendrían que destruir.
+	\item \(S(H)\) $<$ \(F(H)\): estos bloques faltantes solo se pueden rellenar extrayendo del inventario.
+\end{itemize}
+
+Mover un bloque (con gasto energético \(m\)), es destruir uno y agregar otro, por lo que se debería comprobar si es más barato o más caro mover un bloque que destruirlo y agregarlo(con gasto energético d y c respectivamente).
+
+Si fuera más caro mover un bloque que destruirlo y agregarlo, no tendría sentido mover \(x\) bloques. Por lo que se debería comprobar.
+
+Si \(m - c - d \) $<$ \(0\): es más barato mover bloques que destruir y agregrar por lo que deberíamos maximizar a \(x\)
+
+Si \(m - c - d \) $\geq$ \(0\): es más barato destruir y agregar que mover bloques por lo que para minimizar el gasto \(x\) debe ser igual a \(0\).
+
+\subsection{Función de costo}
+
+Tomando en cuenta todo lo anterior podemos crear una función de costo en base a \(H\):
+
+\[C(H) =  x \times m + (S(H) -  x) \times d + (F(H) - x) \times c\].
+
+Donde podemos ver que \(x\), al representar la cantidad de bloques a mover, es multiplicado por \(m\), que es el valor energético de mover un bloque de un lugar a otro. En los otros sumandos vemos que se le resta \(x\) a \(S(H)\) y a \(F(H)\), así se conocen los bloques que faltarían por destruir y agregar respectivamente. No es posible obtener un negativo de estas sustracciones ya que x respresenta el mínimo entre \(S(H)\) y \(F(H)\), obteniendo 0 como mínimo valor.
+
+Hallamos este costo por cada valor posible de \(H\) y nos quedamos con la altura con el menor gasto energético.
+
+\subsection{Demostración de la optimalidad}
+La estrategia es óptima porque:
+\begin{itemize}
+	\item Utiliza las operaciones más económicas primero: mover bloques (si m < c + d). tendrían que destruir.
+	\item Minimiza el costo total para cada posible altura H.
+	\item Considera todas las alturas posibles y elige la que da el menor costo total.
+\end{itemize}
+
+Al seguir este método, aseguramos que:
+
+\begin{itemize}
+	\item No hay combinación de operaciones que resulte en un menor consumo de energía.
+	\item La altura H seleccionada es la que permite aprovechar al máximo los movimientos de bloques y minimizar las operaciones más costosas.
+\end{itemize}
+
+\subsection{Conclusiones}
+
+Esta estrategia garantiza que, para cualquier muro inicial, construiremos el muro uniforme utilizando la menor cantidad de energía posible.
+
+\subsection{Código en Python}
+\begin{verbatim}
+def min_energy_to_build_wall_heights_optimizado(heights, c, d, m):
+
+best_cost = 0
+best_combination = []
+min_height = min(heights)
+max_height = max(heights)
+
+block_count = [0] * (max_height + 1)
+
+for h in heights:
+block_count[h] += 1
+
+for i in range(max_height, 0, -1):
+block_count[i - 1] += block_count[i]
+
+block_count[0] = 0
+for i in range(1, max_height):
+block_count[i + 1] += block_count[i]
+
+for h in range(min_height, max_height + 1):
+const_count = 0
+dest_count = 0
+move_count = 0
+
+dest_count = block_count[max_height] - block_count[h]
+const_count = len(heights) * h - block_count[h]
+
+if m < c + d:
+move_count = min(dest_count, const_count)
+dest_count -= move_count
+const_count -= move_count
+
+cost = dest_count * d + const_count * c + move_count * m
+
+if h == min_height or cost < best_cost:
+best_cost = cost
+best_combination = [move_count, dest_count, const_count]
+
+print("Best combination ", best_combination)
+return best_cost
+\end{verbatim}
+
+\subsection{Explicación del código}
+	
+Se crea un arreglo \texttt{block\_count} para almacenar la cantidad de bloques en cada altura.
+
+Conteo acumulado de bloques: Se actualiza \texttt{block\_count} para que en cada posición \(i\), el valor represente el número de bloques de altura \(i\) o más. Esto permite calcular cuántos bloques están por encima de cualquier altura \(h\) de forma eficiente.
+
+Cálculo del costo para cada altura: Se exploran todas las posibles alturas objetivo \(h\) entre \texttt{min\_height} y \texttt{max\_height}. Se calculan:
+\begin{itemize}
+	\item \texttt{dest\_count}: el número de bloques que deben ser destruidos (bloques que están por encima de la altura \(h\)).
+	\item \texttt{const\_count}: el número de bloques que deben ser construidos (bloques que faltan para alcanzar la altura \(h\)).
+\end{itemize}
+
+Si mover es más barato que construir y destruir, se intenta mover tantos bloques como sea posible. Se calcula el costo total de las operaciones y se guarda el costo si es menor que el mejor costo encontrado hasta el momento.
+
+Al final, el algoritmo devuelve el costo mínimo.
+
+\subsection{Complejidad temporal}
+\begin{itemize}
+	\item Calcular \texttt{min\_height} y \texttt{max\_height}: Esto toma \(O(n)\), donde \(n\) es el número de elementos en \texttt{heights}.
+	\item Inicialización del arreglo \texttt{block\_count}: Esto toma \(O(\texttt{max\_height})\), ya que se inicializa un arreglo de longitud \(\texttt{max\_height}+1\).
+\end{itemize}
+
+\textbf{Conteo de bloques:}
+\begin{itemize}
+	\item El bucle que itera sobre \texttt{heights} para contar los bloques tiene un coste \(O(n)\).
+	\item Luego, el ajuste del arreglo \texttt{block\_count} (sumando acumuladamente de alturas más altas a más bajas) toma \(O(\texttt{max\_height})\).
+\end{itemize}
+
+\textbf{Cálculo de costos:}
+
+Para cada altura \(h\) entre \texttt{min\_height} y \texttt{max\_height}, el algoritmo realiza cálculos en \(O(1)\), por lo que el total es \(O(\texttt{max\_height})\).
+
+Entonces, la complejidad temporal total es:
+\[
+O(n + \texttt{max\_height})
+\]
+
+\subsection{Complejidad espacial}
+\begin{itemize}
+	\item Arreglo \texttt{heights}: Tiene un tamaño de \(O(n)\), ya que almacena las alturas de los bloques.
+	\item Arreglo \texttt{block\_count}: Tiene un tamaño de \(O(\texttt{max\_height})\).
+	\item Variables auxiliares: \texttt{best\_cost}, \texttt{best\_combination}, y las variables dentro de los bucles ocupan espacio constante, es decir, \(O(1)\).
+\end{itemize}
+
+Entonces, la complejidad espacial total es:
+\[
+O(n + \texttt{max\_height})
+\]
 
 
 \section{Solución por Backtracking}
@@ -560,7 +730,7 @@ Finalmente, el algoritmo devuelve el costo mínimo de energía entre las tres op
 \subsubsection{Reducción a Subproblemas}
 En cada paso recursivo, el algoritmo explora todas las posibles maneras de igualar las alturas: construir, destruir o mover bloques. Dado que explora todas las combinaciones posibles de movimientos mediante backtracking, asegura que, en algún punto, alcanzará una configuración donde todas las columnas sean iguales y retorna el costo acumulado.
 
-\section{Optimalidad}
+\subsection{Optimalidad}
 
 El algoritmo almacena y compara el costo mínimo de energía en cada iteración, asegurando que la solución devuelta sea óptima. Corta las ramas donde el costo supera el mínimo conocido, lo que permite minimizar el tiempo de búsqueda sin comprometer la correctitud.
 
@@ -581,7 +751,7 @@ El algoritmo utiliza:
 \end{itemize}
 Por lo tanto, la complejidad espacial es \( O(n) \), donde \( n \) es el número de columnas.
 
-\subsection{Conclusión}
+\subsection{Conclusiones}
 El algoritmo propuesto utiliza backtracking para encontrar la forma óptima de igualar las alturas de un muro, minimizando el costo de energía. Aunque es correcto y garantiza una solución óptima, su complejidad temporal crece exponencialmente con el número de columnas, lo que puede hacerlo impráctico para grandes valores de \( n \). Sin embargo, la técnica es efectiva para problemas pequeños y asegura la minimización del costo energético a través de la exploración exhaustiva del espacio de soluciones.
 
 \subsubsection{Observaciones}
