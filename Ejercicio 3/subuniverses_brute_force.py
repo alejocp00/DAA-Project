@@ -1,5 +1,5 @@
 import time
-import random
+from utils import generate_subsets, generate_universe
 
 def exact_set_cover(universe, subsets):
     used_subsets = []
@@ -25,39 +25,23 @@ def exact_set_cover(universe, subsets):
     else:
         return None
 
+if __name__ == "__main__":
 
-# Ejemplo de uso
-def generate_universe(n):
-    return set(range(1, n + 1))
+    U = generate_universe(30)
+    print(f"Universo \n{U}\n")
+    S = generate_subsets(30, 5) # Se generaran entre 30 y 5*30 subconjuntos de tamaño random
+    print("Subconjuntos")
+    for s in enumerate(S):
+        print(s[0], s[1])
 
+    time_inicial_1 = time.time()
+    solution = exact_set_cover(U, S)
+    time_final_1 = time.time()
 
-def generate_subsets(n):
-    r = random.randint(n, 5 * n)
-    S = []
-    for i in range(1, r):
-        l = random.randint(1, n // 3)
-        s = set()
-        while len(s) < l:
-            s.add(random.randint(1, n + 1))
-
-        S.append(s)
-
-    return S
-
-
-U = generate_universe(30)
-S = generate_subsets(30)
-for s in enumerate(S):
-    print(s[0], s[1])
-
-time_inicial_1 = time.time()
-solution = exact_set_cover(U, S)
-time_final_1 = time.time()
-
-print("Tiempo de ejecucion de exact_set_cover: ", time_final_1 - time_inicial_1)
-if solution:
-    print("Es posible encontrar una cobertura exacta en la solucion 1:")
-    for subset in solution:
-        print(subset)
-else:
-    print("No es posible encontrar una cobertura exacta en 1.")
+    print("Tiempo de ejecucion de exact_set_cover: ", time_final_1 - time_inicial_1)
+    if solution:
+        print("Es posible encontrar una cobertura exacta:")
+        for subset in solution:
+            print(subset)
+    else:
+        print("No es posible encontrar una cobertura exacta")
