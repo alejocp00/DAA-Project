@@ -30,30 +30,30 @@
 \begin{document}
 \maketitle
 \large
-\section{Ejerccio}
+\section{Ejercicio}
 
-Se tiene en un universo principal \(U\) con varias leyes.
+Se tiene un universo principal \(U\) con varias leyes.
 \[U = \{ l_1, l_2, \dots, l_n \}\]
-Sean \(C_1, C_2, \dots, C_k\) subuniversos donde cada uno presenta un subconjunto de leyes del universo principal. Se desea saber si existe un conjunto de estos subuniversos tal que su union formen el universo principal y que sean disjuntos entre si.
+Sean \(C_1, C_2, \dots, C_k\) subuniversos donde cada uno presenta un subconjunto de leyes del universo principal. Se desea saber si existe un conjunto de estos subuniversos tal que su unión formen el universo principal y que sean disjuntos entre sí.
 
 
-\section{Solucion}
+\section{Solución}
 
 \subsection{Cobertura exacta de conjuntos / Exact Set Cover}
 
 Analizando el ejercicio podemos ver que es una instancia de un problema NP-Completo conocido, Exact Set Cover o Exact Cover.
 
-Definicion (Exact Set Cover):
+Definición (Exact Set Cover):
 
 \begin{itemize}
 \item Entrada:
     \begin{itemize}
     \item Un conjunto finito \(X\)(universo)
-    \item Una coleccion \(S\) de subconjuntos de \(X\)
+    \item Una colección \(S\) de subconjuntos de \(X\)
     \end{itemize}
 \item Pregunta:
     \begin{itemize}
-    \item ¿Existe una subcoleccion \(T\) $\subseteq$ \(S\)  tal que cada elemento de \(X\) pertence exactamente un subconjunto en \(T\)?
+    \item ¿Existe una subcolección \(T\) $\subseteq$ \(S\)  tal que cada elemento de \(X\) pertenece exactamente a un subconjunto en \(T\)?
     \end{itemize}
 \end{itemize}
 
@@ -69,51 +69,51 @@ Mapeo de Instancias
     \end{itemize}
 \item Objetivo:
     \begin{itemize}
-    \item Encontrar una subcoleccion de \(C\) que cubra cada elemento de \(U\) exactamente una vez.
+    \item Encontrar una subcolección de \(C\) que cubra cada elemento de \(U\) exactamente una vez.
     \end{itemize}
 \end{itemize}
 
-Como podemos ver la estructura y pregunta de ambos problemas son identicas.
-Por lo que podemos afirmar que el problema de los subniversos es una instancia de Exact Set Cover.
+Como podemos ver la estructura y pregunta de ambos problemas son idénticas.
+Por lo que podemos afirmar que el problema de los subuniversos es una instancia de Exact Set Cover.
 
 
-\subsection{Demostracion NP-Completo}
+\subsection{Demostración NP-Completo}
 
-\textbf{Demostracion NP:}
+\textbf{Demostración NP:}
 
-Para demostrar que el problema esta en NP, tenemos que verificar que en tiempo polinomial una solucion candidata sea valida. \\
+Para demostrar que el problema está en NP, tenemos que verificar que en tiempo polinomial una solución candidata sea válida. \\
 
-\textbf{Verificacion:}
+\textbf{Verificación:}
 
-\textbf{Cobertura Completa:} Verificamos que la union de los subconjuntos seleccionados es igual a \(U\). Podemos construir la union iterando sobre cada conjunto seleccionado y agregando sus elementos a un conjunto auxiliar.
+\textbf{Cobertura Completa:} Verificamos que la unión de los subconjuntos seleccionados es igual a \(U\). Podemos construir la unión iterando sobre cada conjunto seleccionado y agregando sus elementos a un conjunto auxiliar.
 
-\textbf{Cobertura Exacta:} Verificamos que no hay solapamientos entre los conjuntos seleccionados. Mantenemos un conjunto auxiliar y comprobamos que cada elemento se agrega exactamente una vez. Si encontramos un elemento que ya esta en el conjunto auxiliar al procesar un nuevo subconjunto, entonces hay solapamiento.
+\textbf{Cobertura Exacta:} Verificamos que no hay solapamientos entre los conjuntos seleccionados. Mantenemos un conjunto auxiliar y comprobamos que cada elemento se agrega exactamente una vez. Si encontramos un elemento que ya está en el conjunto auxiliar al procesar un nuevo subconjunto, entonces hay solapamiento.
 
-\textbf{Tiempo Requerido:} $O(\sum_{s\in S'} |s|)$ donde \(S'\) es la subcoleccion seleccionada.
+\textbf{Tiempo Requerido:} $O(\sum_{s\in S'} |s|)$ donde \(S'\) es la subcolección seleccionada.
 
-La verificacion se pude realizar en tiempo polinomial respecto al tamaño del universo \(U\) y el total de elementos en los subconjuntos seleccionados.
+La verificación se puede realizar en tiempo polinomial respecto al tamaño del universo \(U\) y el total de elementos en los subconjuntos seleccionados.
 \\
 
 \textbf{Demostrar NP-Hard:}
- Demostremos que el enigma de los subuniversos es NP-Hard mediante una reduccion desde el problema SAT que es conocido por ser NP-Completo.
+ Demostremos que el enigma de los subuniversos es NP-Hard mediante una reducción desde el problema SAT que es conocido por ser NP-Completo.
  \\
 
-\textbf{Descripcion de SAT:}
+\textbf{Descripción de SAT:}
 \begin{itemize}
 \item Entrada:
     \begin{itemize}
     \item Un conjunto de varaibles booleanas \(B = \)$\{b_1,b_2, \dots, b_n\}$
-    \item Una formula \(f\) en forma normal conjuntiva (FNC), donde cada clausula $C_i$ es la disyuncion literales(variables o su negacion).
+    \item Una fórmula \(f\) en forma normal conjuntiva (FNC), donde cada cláusula $C_i$ es la disyunción de literales(variables o su negación).
     \end{itemize}
 \item Pregunta:
     \begin{itemize}
-    \item ¿Existe una asignacion de valores de verdad a las variables en \(B\) que satisfaga todas las clausulas de \(f\)?
+    \item ¿Existe una asignación de valores de verdad a las variables en \(B\) que satisfaga todas las cláusulas de \(f\)?
     \end{itemize}
 \end{itemize}
 
-\subsection{Reduccion}
+\subsection{Reducción}
 
-\textbf{Direccion 1:} Si existe una cobertura exacta  entonces f es satisfacible
+\textbf{Dirección 1:} Si existe una cobertura exacta  entonces f es satisfacible
 
 La idea principal es construir una fórmula booleana que codifique las restricciones del problema de Exact Set Cover. Para cada conjunto \(S_i\) en la familia \(S\), introducimos una variable booleana \(x_i\). La variable \(x_i\) será verdadera si y solo si el conjunto \(S_i\) es parte de la solución (es decir, si \(S_i\) está en \(S'\)).\\
 
@@ -141,13 +141,13 @@ La fórmula booleana correspondiente sería:
 \[ (x_{1} \vee x_{2}) \wedge (x_{2} \vee x_{3}) \wedge \neg(x_{1} \wedge x_{2}) \wedge \neg(x_{2} \wedge x_{3})\]
 donde $x_1$, $x_2$, y $x_3$ corresponden a los conjuntos \(\{a, b\}, \{b, c\}, y \{c\}\)\ respectivamente.
 
-Tomando como solucion del Exact Set Cover a $x_1$ y $x_3$.
-Obtenemos ver que satisface la formula, tomando como verdadero los literales de los conjuntos seleccionados de $S$ y como falso los no seleccionados.
+Tomando como solución del Exact Set Cover a $x_1$ y $x_3$.
+Obtenemos ver que satisface la fórmula, tomando como verdadero los literales de los conjuntos seleccionados de $S$ y como falso los no seleccionados.
 $x_1$ verdadero, $x_2$ falso, $x_3$ verdadero. \\
 
 La reducción de Exact Set Cover a SAT es polinomial. Esto significa que el tamaño de la fórmula booleana producida está acotado por un polinomio en el tamaño de la instancia de Exact Set Cover.
 
-\textbf{Direccion 2:} Si f es satisfacible entonces existe una cobertura exacta.
+\textbf{Dirección 2:} Si f es satisfacible entonces existe una cobertura exacta.
 
 Dada una instancia de SAT:
 
@@ -157,27 +157,27 @@ y \(x_{i,j}\)=\{ True or False, de la forma $\neg$$x_{i,j}$ o $x_{i,j}$\}\\
 
 \textbf{Crearemos una instancia de Exact Set Cover}
 
-Definamos un conjunto \(E\) y una familia de subconjuntos \(F\), tal que existe una cobertura exacta de \(E\) en \(F\) si la formula es satifacible.
+Definamos un conjunto \(E\) y una familia de subconjuntos \(F\), tal que existe una cobertura exacta de \(E\) en \(F\) si la fórmula es satifacible.
 
-El conjunto universo \(E\) consistira de 3 tipos de elementos:
+El conjunto universo \(E\) consistirá de 3 tipos de elementos:
 
 \begin{itemize}
     \item $x_i$: por cada variable i
-    \item $C_j$:: por cada clausula j
-    \item $p_{i,j}$ por cada aparicion de la variable i en la clausula j
+    \item $C_j$:: por cada cláusula j
+    \item $p_{i,j}$ por cada aparición de la variable i en la cláusula j
 \end{itemize}
 
 Para el conjunto \(F\) tendremos:
 
-Por cada variable i creamos dos conjuntos, el conjunto verdadero $x_{i}^{T}$ y el conjunto falso $x_{i}^{F}$. El conjunto verdadero contiene $x_i$ en conjunto a las apariciones de \(i\) en cada clausula \(j\) donde aparezca negada $p_{i,j}$ y el conjunto falso contiene $x_i$ en conjunto a las apraciciones de \(i\) en cada clausula \(j\) donde no aparezca negada $p_{ij}$.\\
+Por cada variable i creamos dos conjuntos, el conjunto verdadero $x_{i}^{T}$ y el conjunto falso $x_{i}^{F}$. El conjunto verdadero contiene $x_i$ en conjunto a las apariciones de \(i\) en cada cláusula \(j\) donde aparezca negada $p_{i,j}$ y el conjunto falso contiene $x_i$ en conjunto a las apariciones de \(i\) en cada cláusula \(j\) donde no aparezca negada $p_{ij}$.\\
 
-\textbf{Ejemplo:} Si $x_1$ aparece en la clausula 2 y $\neg$$x_1$ aparece en las clausulas 3 y 4 creamos los conjuntos:
+\textbf{Ejemplo:} Si $x_1$ aparece en la cláusula 2 y $\neg$$x_1$ aparece en las cláusulas 3 y 4 creamos los conjuntos:
 
 $x_{1}^{T}$ = \{$x_1$,$p_{1,2}$\} y $x_{1}^{F}$ = \{$x_1$,$p_{1,3}$,$p_{1,4}$\}\\
 
 Por cada elemento $p_{i,j}$ creamos un conjunto \{$C_j$, $p_{i,j}$\} y otro solo con \{$p_{i,j}$\}.
 
-Como los conjuntos verdaderos y falsos son los unicos que contienen el elemento $x_i$, por cada variable $i$, una solucion de Exact Set Cover debe contener exactamente uno de los correspondientes conjuntos verdaderos o falsos. Esto da una relacion entre los conjuntos verdaderos/falsos seleccionandos en las soluciones del Exact Set Cover y las variables asignadas a las instancia de SAT.
+Como los conjuntos verdaderos y falsos son los únicos que contienen el elemento $x_i$, por cada variable $i$, una solución de Exact Set Cover debe contener exactamente uno de los correspondientes conjuntos verdaderos o falsos. Esto da una relación entre los conjuntos verdaderos/falsos seleccionados en las soluciones del Exact Set Cover y las variables asignadas a las instancias de SAT.
 
 Además, cualquier solución de Exact Set Cover debe, para cada cláusula j, contener para algunos i el conjunto \{$C_j$, $p_{i,j}$\}.
 
@@ -199,7 +199,7 @@ $x_{2}^{F}$ = \{$x_2$, $p_{2,1}$, $p_{2,2}$\}
 $x_{3}^{T}$ = \{$x_3$, $p_{3,1}$\}
 $x_{3}^{F}$ = \{$x_3$, $p_{3,2}$\}
 
-Creamos los conjuntos de clausulas con sus $p_{i,j}$
+Creamos los conjuntos de cláusulas con sus $p_{i,j}$
 
 \{$C_1$, $p_{1,1}$\}, \{$C_1$, $p_{2,1}$\}, \{$C_1$, $p_{3,1}$\}
 \{$C_2$, $p_{1,2}$\}, \{$C_2$, $p_{2,2}$\}, \{$C_2$, $p_{3,2}$\}
@@ -223,7 +223,7 @@ Sea el universo
 
 \[A = \{x_1, x_2, x_3, C_1, C_2, p_{1,1}, p_{1,2}, p_{1,3}, p_{2,1}, p_{2,2} ,p_{2,3}, p_{3,1}, p_{3,2}, p_{3,3}\}\]
 
-Dada una solucion cualquiera de SAT sea esta
+Dada una solución cualquiera de SAT, sea esta
 \[s = \neg x_1 \wedge x_2 \wedge x_3\]
 
 cubriremos el universo, dando como resultado el subconjunto
@@ -233,14 +233,14 @@ cubriremos el universo, dando como resultado el subconjunto
 
 Con estas dos reducciones podemos demostrar que estos problemas son equivalentes.
 
-Hemos demostrados que el enigma de los subuniversos es NP-Completo.
+Hemos demostrado que el enigma de los subuniversos es NP-Completo.
 
 
 \subsection{Algoritmo}
 
 \textbf{Backtrack}
 
-Para la solucion de este problema, planteamos un algoritmo de backtrack que iteramos por cada conjunto y vamos agregando si no existe solapamiento. Termina si encuentra una solucion y la devuelve, si no devuelve vacio.
+Para la solución de este problema, planteamos un algoritmo de backtrack que iteramos por cada conjunto y vamos agregando si no existe solapamiento. Termina si encuentra una solución y la devuelve, si no, devuelve vacío.
 
 \begin{lstlisting}
 def exact_set_cover(universe, subsets):
@@ -272,7 +272,7 @@ Podemos ver que es un algoritmo bastante sencillo pero ineficiente ya que recorr
 
 \textbf{Greedy Conjunto de Mayor Tamaño}
 
-Como el anterior es muy ineficiente para mejorar la eficiciencia del algoritmo usamos un enfoque greedy donde siempre a la hora de agregar tomamos el conjunto con mayor cantidad de elementos. Para lograr es ordenamos el conjunto \(S\) de mayor a menor en cuanto a longitud y realizamos backtrack.\\
+Como el anterior es muy ineficiente para mejorar la eficiciencia del algoritmo usamos un enfoque greedy donde siempre a la hora de agregar tomamos el conjunto con mayor cantidad de elementos. Para lograr esto ordenamos el conjunto \(S\) de mayor a menor en cuanto a longitud y realizamos backtrack.\\
 
 \textbf{Resultados:}
 
@@ -282,7 +282,7 @@ Para un universo \(U\) de 30 elementos y un conjunto \(S\) de 75 subuniversos. \
 
 \textbf{Greedy Conjunto Mayor Tamaño}: 0.006000041961669922ms.
 
-Podemos observar que el algoritmo greedy es mas eficiente al de backtrack.
+Podemos observar que el algoritmo greedy es más eficiente que el de backtrack.
 
 
 
