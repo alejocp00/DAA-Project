@@ -17,7 +17,7 @@
 
 \section{Problema}
 
-En el juego de MineCraft una de las principales distracciones es la construccion, los mejores jugadores logran hacer monumentos imponentes que sorprenden a todos. Actualmente se esta llevando a cabo un torneo de construcción en el juego, donde la tarea es hacer un muro. Un muro es, como sabemos, una hilera de columnas de bloques de piedra, todos de la misma altura. En MineCraft, para llevar a cabo esta tarea hay 3 movimientos válidos: 
+En el juego de MineCraft una de las principales distracciones es la construcción, los mejores jugadores logran hacer monumentos imponentes que sorprenden a todos. Actualmente se está llevando a cabo un torneo de construcción en el juego, donde la tarea es hacer un muro. Un muro es, como sabemos, una hilera de columnas de bloques de piedra, todos de la misma altura. En MineCraft, para llevar a cabo esta tarea hay 3 movimientos válidos: 
 
 - sacar un bloque de piedra del inventario y aumentar la altura de la columna en cuestión en 1 de altura 
 - destruir un bloque de piedra de una columna y disminuir la altura de la columna en cuestión en 1 de altura 
@@ -196,7 +196,7 @@ Sabemos que:
 cvf(piso) = d \cdot \textit{block\_count}(piso)
 \]
 ya que no se puede considerar usar movimientos debido a (*1).\\
-En el peor de los casos, si no fuera factible usar movimientos para reducir el costo, el costo de $cvf(tope)$ sería:
+En el peor de los casos, si no fuera factible usar movimientos para reducir el costo, el costo de $cvf(tope)$ sería igual:
 \[
 cvf(tope) \leq d \cdot \textit{block\_count}(tope)
 \]
@@ -510,9 +510,9 @@ Mover un bloque (con gasto energético \(m\)), es destruir uno y agregar otro, p
 
 Si fuera más caro mover un bloque que destruirlo y agregarlo, no tendría sentido mover \(x\) bloques. Por lo que se debería comprobar.
 
-Si \(m - c - d \) $<$ \(0\): es más barato mover bloques que destruir y agregrar por lo que deberíamos maximizar a \(x\)
+Si \(m - c - d \) $<$ \(0\): es más barato mover bloques que destruir y agregar por lo que deberíamos maximizar a \(x\)
 
-Si \(m - c - d \) $\geq$ \(0\): es más barato destruir y agregar que mover bloques por lo que para minimizar el gasto \(x\) debe ser igual a \(0\).
+Si \(m - c - d \) $\geq$ \(0\): es más barato destruir y agregar que mover bloques por lo que para minimizar el gasto, \(x\) debe ser igual a \(0\).
 
 \subsection{Función de costo}
 
@@ -527,7 +527,7 @@ Hallamos este costo por cada valor posible de \(H\) y nos quedamos con la altura
 \subsection{Demostración de la optimalidad}
 La estrategia es óptima porque:
 \begin{itemize}
-	\item Utiliza las operaciones más económicas primero: mover bloques (si m < c + d). tendrían que destruir.
+	\item Utiliza las operaciones más económicas primero: mover bloques (si m $<$ c + d).
 	\item Minimiza el costo total para cada posible altura H.
 	\item Considera todas las alturas posibles y elige la que da el menor costo total.
 \end{itemize}
@@ -707,22 +707,15 @@ return min(construct_cost, destruct_cost, move_cost)
 \end{itemize}
 
 \subsubsection{Decisiones Recursivas}
-El algoritmo busca todas las posibles acciones: construir, destruir, o mover bloques. Evalúa el costo de cada acción en función del costo acumulado y decide en qué columna realizar los cambios:
+El algoritmo busca todas las posibles acciones: construir, destruir, o mover bloques. Evalúa el costo de cada acción en función del costo acumulado.
 \begin{itemize}
-	\item Se selecciona la columna de menor altura para agregar un bloque.
-	\item Se selecciona la columna de mayor altura para eliminar un bloque.
-	\item Se selecciona la columna más alta para mover un bloque a la columna más baja.
+	\item Se selecciona la columna de menor altura para agregar un bloque, se ajusta el costo y se realiza la llamada recursiva.
+	\item Se selecciona la columna de mayor altura para eliminar un bloque, se ajusta el costo y se realiza la llamada recursiva.
+	\item Se selecciona la columna más alta para mover un bloque a la columna más baja, se ajusta el costo y se realiza la llamada recursiva.
 \end{itemize}
 
 \subsubsection{Máscara (mask)}
-El arreglo \texttt{mask} ayuda a evitar movimientos innecesarios repetidos, limitando las acciones que se pueden tomar en columnas específicas para optimizar el proceso de backtracking.
-
-\subsubsection{Detalles Clave}
-\begin{itemize}
-	\item \textbf{Incrementar altura:} Se incrementa la columna de menor altura, se ajusta el costo y se realiza la llamada recursiva.
-	\item \textbf{Decrementar altura:} Se decrementa la columna de mayor altura, se ajusta el costo y se realiza la llamada recursiva.
-	\item \textbf{Mover bloques:} Se transfiere un bloque de la columna más alta a la más baja y se ajusta el costo.
-\end{itemize}
+El arreglo \texttt{mask} ayuda a evitar movimientos innecesarios, limitando las acciones que se pueden tomar en columnas específicas para optimizar el proceso de backtracking.
 
 Finalmente, el algoritmo devuelve el costo mínimo de energía entre las tres operaciones posibles.
 
@@ -730,20 +723,25 @@ Finalmente, el algoritmo devuelve el costo mínimo de energía entre las tres op
 \subsubsection{Reducción a Subproblemas}
 En cada paso recursivo, el algoritmo explora todas las posibles maneras de igualar las alturas: construir, destruir o mover bloques. Dado que explora todas las combinaciones posibles de movimientos mediante backtracking, asegura que, en algún punto, alcanzará una configuración donde todas las columnas sean iguales y retorna el costo acumulado.
 
+\subsubsection{Observaciones}
+\begin{enumerate}
+	\item Si se mueve un bloque desde una columna \( i \) con altura menor a \( h_{\text{max}} \) hacia abajo, se estaría gastando energía innecesariamente. Digamos que \( h_0 \geq h_i \), entonces en esa columna se volverá a poner un bloque. Si \( h_0 < h_i \), por las características del algoritmo cuando todas las filas con columnas más altas se hayan vaciado, \( i \) será la columna más alta y se moverá el mismo bloque hacia abajo. Da igual si no se pone en la misma posición, el gasto de energía es el mismo.
+	\item Si se aumenta en 1 la altura de una columna \( i \) que no es la más baja y \( h_0 \leq h_i \), el bloque que se construyó se va a tener que destruir, incurriendo en un gasto de energía extra. Si \( h_0 > h_i \), por las características del algoritmo cuando todas las filas con columnas más bajas se hayan llenado, \( i \) será la columna más baja y se agregará un bloque en ella, aunque no sea en el mismo momento, el gasto de energía es el mismo.
+	\item Si se disminuye en 1 la altura de una columna \( i \) que no es la más alta, análogo a 1 se estaría gastando energía innecesariamente, porque si \( h_0 \geq h_i \), entonces en esa columna se volverá a poner un bloque. Si \( h_0 < h_i \), por las características del algoritmo cuando todas las filas con columnas más altas se hayan vaciado, \( i \) será la columna más alta y se destruirá el mismo bloque.
+\end{enumerate}
+
+
 \subsection{Optimalidad}
 
 El algoritmo almacena y compara el costo mínimo de energía en cada iteración, asegurando que la solución devuelta sea óptima. Corta las ramas donde el costo supera el mínimo conocido, lo que permite minimizar el tiempo de búsqueda sin comprometer la correctitud.
 
-\subsection{Complejidad Temporal}
+\subsection{Complejidad temporal}
 El algoritmo de backtracking explora todas las combinaciones posibles de incrementos, decrementos y movimientos de bloques. Esto implica un crecimiento exponencial en el número de posibles configuraciones a explorar.
 
-\subsubsection{Número de Posibilidades por Columna}
-Para cada columna, hay tres posibles acciones: construir, destruir o mover bloques. En el peor de los casos, el algoritmo explora todas estas posibilidades, y dado que hay \( n \) columnas y el número de bloques puede cambiar en cada paso, el espacio de búsqueda es aproximadamente del orden de \( O(3^n) \).
+\subsubsection{Número de posibilidades por columna}
+En cada paso recursivo, para cada columna, hay tres posibles acciones: construir, destruir o mover bloques. En el peor de los casos, el algoritmo explora todas estas posibilidades, y dado que hay \( n \) columnas y el número de bloques puede cambiar en cada paso, el espacio de búsqueda es aproximadamente del orden de \( O(3^n) \).
 
-\subsubsection{Complejidad Total}
-La complejidad temporal aproximada es \( O(3^n) \), donde \( n \) es el número de columnas. Esto se debe a que en cada paso recursivo se tienen hasta tres decisiones por columna (construir, destruir o mover).
-
-\subsection{Complejidad Espacial}
+\subsection{Complejidad espacial}
 El algoritmo utiliza:
 \begin{itemize}
 	\item Un arreglo \texttt{mask} de tamaño \( n \) para almacenar el estado de las columnas.
@@ -753,13 +751,5 @@ Por lo tanto, la complejidad espacial es \( O(n) \), donde \( n \) es el número
 
 \subsection{Conclusiones}
 El algoritmo propuesto utiliza backtracking para encontrar la forma óptima de igualar las alturas de un muro, minimizando el costo de energía. Aunque es correcto y garantiza una solución óptima, su complejidad temporal crece exponencialmente con el número de columnas, lo que puede hacerlo impráctico para grandes valores de \( n \). Sin embargo, la técnica es efectiva para problemas pequeños y asegura la minimización del costo energético a través de la exploración exhaustiva del espacio de soluciones.
-
-\subsubsection{Observaciones}
-\begin{enumerate}
-	\item Si se mueve un bloque desde una columna \( i \) con altura menor a \( h_{\text{max}} \) hacia abajo, se estaría gastando energía innecesariamente. Digamos que \( h_0 \geq h_i \), entonces en esa columna se volverá a poner un bloque. Si \( h_0 < h_i \), por las características del algoritmo cuando todas las filas con columnas más altas se hayan vaciado, \( i \) será la columna más alta y se moverá el mismo bloque hacia abajo. Da igual si no se pone en la misma posición, el gasto de energía es el mismo.
-	\item Si se aumenta en 1 la altura de una columna \( i \) que no es la más baja y \( h_0 \leq h_i \), el bloque que se construyó se va a tener que destruir, incurriendo en un gasto de energía extra. Si \( h_0 > h_i \), por las características del algoritmo cuando todas las filas con columnas más bajas se hayan llenado, \( i \) será la columna más baja y se agregará un bloque en ella, aunque no sea en el mismo momento, el gasto de energía es el mismo.
-	\item Si se disminuye en 1 la altura de una columna \( i \) que no es la más alta, análogo a 1 se estaría gastando energía innecesariamente, porque si \( h_0 \geq h_i \), entonces en esa columna se volverá a poner un bloque. Si \( h_0 < h_i \), por las características del algoritmo cuando todas las filas con columnas más altas se hayan vaciado, \( i \) será la columna más alta y se destruirá el mismo bloque.
-\end{enumerate}
-
 
 \end{document}
