@@ -1,5 +1,6 @@
 from subuniverses_greedy import exact_set_cover_greedy
 from subuniverses_brute_force import exact_set_cover
+from subuniverses_ple import ilp_exact_cover
 from utils import generate_subsets, generate_universe
 import time
 
@@ -30,6 +31,17 @@ if __name__ == "__main__":
     if solution_greedy:
         print("Es posible encontrar una cobertura exacta en la solucion greedy:")
         for subset in solution_greedy:
+            print(subset)
+    else:
+        print("No es posible encontrar una cobertura exacta")
+
+    time_inicial_ilp = time.time()
+    solution_ilp = ilp_exact_cover(U, S)
+    time_final_ilp = time.time()
+    print("Tiempo de ejecucion de ilp_exact_cover: ", time_final_ilp - time_inicial_ilp)
+    if solution_ilp:
+        print("Es posible encontrar una cobertura exacta en la solucion ilp:")
+        for subset in solution_ilp:
             print(subset)
     else:
         print("No es posible encontrar una cobertura exacta")

@@ -308,4 +308,106 @@ Para un universo \(U\) de 30 elementos y un conjunto \(S\) de 75 subuniversos. \
 
 Podemos observar que el algoritmo greedy es más eficiente que el de backtrack.
 
+\subsection{Solución utilizando Programación Lineal Entera (PLE)}
+
+La Programación Lineal Entera (PLE) es una técnica de optimización matemática que busca minimizar o maximizar una función objetivo sujeta a restricciones lineales, donde algunas o todas las variables deben tomar valores enteros. Es una extensión de la Programación Lineal (PL), donde las variables pueden ser fraccionarias, pero en PLE se restringen a valores enteros, comúnmente binarios (0 o 1) en problemas de selección.
+
+El objetivo es seleccionar un subconjunto de los subconjuntos disponibles que cubra exactamente todos los elementos del universo sin solapamientos.
+
+Definimos variables binarias que indican si un subconjunto es seleccionado o no.
+
+\subsubsection{Formulación matemática}
+
+- Variables de decisión
+
+Sea $x_i$ una variable binaria asociada al subconjunto $S_i$:
+
+\begin{equation}
+x_i = \begin{cases}
+1 & \text{si el subconjunto } S_i \text{ está en la solución} \\
+0 & \text{en caso contrario}
+\end{cases}
+\end{equation}
+
+- Función objetivo
+
+Aunque nuestro objetivo principal es encontrar una cobertura exacta, podemos formular una función objetivo que minimice el número de subconjuntos seleccionados (esto es opcional si solo buscamos factibilidad):
+
+\begin{equation}
+\text{Minimizar } Z = \sum_i x_i
+\end{equation}
+
+Si solo buscamos una solución factible y no nos importa el número de subconjuntos, podemos omitir la función objetivo o simplemente buscar cualquier solución que satisfaga las restricciones.
+
+- Restricciones
+
+Para asegurar que cada elemento $e$ del universo $U$ sea cubierto exactamente una vez, establecemos:
+
+\begin{equation}
+\sum_{i: e \in S_i} x_i = 1 \quad \forall e \in U
+\end{equation}
+
+Esto garantiza que cada elemento $e$ esté en exactamente un subconjunto seleccionado.
+
+\subsubsection{Análisis de la formulación}
+
+- Cobertura Exacta
+
+Las restricciones aseguran que cada elemento del universo sea cubierto una sola vez.
+
+- Selección de Subconjuntos
+
+Las variables de decisión $x_i$ controlan qué subconjuntos se incluyen en la solución.
+
+- Factibilidad
+
+Cualquier solución que satisfaga las restricciones representa una cobertura exacta del universo.
+
+\subsubsection{Naturaleza de la solución}
+
+La PLE encuentra una solución que cumple exactamente con las restricciones establecidas. A diferencia de métodos heurísticos o algoritmos aproximados, la PLE garantiza encontrar una solución óptima o determinar que no existe.
+
+
+\subsubsection{Eficiencia comparada con Backtrack}
+
+El Backtrack implica probar todas las posibles combinaciones de subconjuntos, lo cual es computacionalmente inviable para conjuntos grandes debido al crecimiento exponencial. Los solvers de PLE utilizan técnicas avanzadas como ramificación y poda (branch and bound), cortes planos (cutting planes) y heurísticas para explorar el espacio de soluciones de manera eficiente. Aunque el problema sigue siendo NP-hard, los solvers pueden manejar instancias de tamaño moderado en tiempos razonables.
+
+\subsubsection{Flexibilidad}
+
+La PLE permite fácilmente agregar restricciones adicionales o modificar la función objetivo sin cambiar significativamente el modelo.
+
+\subsubsection{Facilidad de implementación}
+
+Modelar el problema como una PLE puede ser más sencillo y requiere menos esfuerzo de programación, especialmente para problemas grandes o complejos.
+
+\subsubsection{Implementación}
+
+\begin{lstlisting}
+import pulp
+from utils import generate_subsets, generate_universe
+import time
+from pulp import PULP_CBC_CMD
+
+def ilp_exact_cover(universe, subsets):
+prob  = pulp.LpProblem("Exact_Cover", pulp.LpMinimize)
+subset_indices = range(len(subsets))
+
+x = pulp.LpVariable.dicts('x', subset_indices, cat='Binary')
+
+prob += pulp.lpSum([x[i] for i in subset_indices])
+
+for e in universe:
+prob += pulp.lpSum([x[i] for i in subset_indices if e in subsets[i]]) == 1
+
+prob.solve(PULP_CBC_CMD(msg=False))
+
+if pulp.LpStatus[prob.status] == 'Optimal':
+solution = [subsets[i] for i in subset_indices if x[i].varValue == 1]
+return solution
+else:
+return None
+\end{lstlisting}
+
+
+
 \end{document}
