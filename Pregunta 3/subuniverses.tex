@@ -107,47 +107,14 @@ La verificación se puede realizar en tiempo polinomial respecto al tamaño del 
     \end{itemize}
 \item Pregunta:
     \begin{itemize}
-    \item ¿Existe una asignación de valores de verdad a las variables en \(B\) que satisfaga todas las cláusulas de \(f\)?
+    \item ¿Existe una asignación de valores de verdad a las variables en \(B\) que satisfaga todas las cláusulas de \(f\)?\\
     \end{itemize}
 \end{itemize}
 
-\subsection{Reducción}
+\textbf{Reducción}
 
-\textbf{Dirección 1:} Si existe una cobertura exacta  entonces f es satisfacible
-
-La idea principal es construir una fórmula booleana que codifique las restricciones del problema de Exact Set Cover. Para cada conjunto \(S_i\) en la familia \(S\), introducimos una variable booleana \(x_i\). La variable \(x_i\) será verdadera si y solo si el conjunto \(S_i\) es parte de la solución (es decir, si \(S_i\) está en \(S'\)).\\
-
-Cada elemento debe estar en exactamente un conjunto:
-
-Para cada elemento \(u \in U\), introducimos una cláusula que asegure que al menos un conjunto que contiene a \(u\) sea seleccionado:
-\[ x_{i1} \vee x_{i2} \vee \dots \vee x_{ik}\]
-donde \(S_{i1}, S_{i2}, \dots, S_{in}\) son todos los conjuntos que contienen a u. Esto asegura que cada elemento esté cubierto al menos una vez.
-Para cada par de conjuntos $S_i$ y $S_j$ que intersectan, introducimos una cláusula que asegure que no ambos conjuntos puedan ser seleccionados simultáneamente
-\[\neg x_i \wedge x_j\]
-
-No se pueden seleccionar conjuntos vacíos:
-
-Si algún conjunto $S_i$ está vacío, simplemente no incluimos la variable $x_i$ en la fórmula. \\
-
-\textbf{Ejemplo:}
-
-Consideremos el siguiente ejemplo de Exact Set Cover:
-
-\(U = \{a, b, c\}\)
-
-\(S = \{\{a, b\}, \{b, c\}, \{c\}\}\)
-
-La fórmula booleana correspondiente sería:
-\[ (x_{1} \vee x_{2}) \wedge (x_{2} \vee x_{3}) \wedge \neg(x_{1} \wedge x_{2}) \wedge \neg(x_{2} \wedge x_{3})\]
-donde $x_1$, $x_2$, y $x_3$ corresponden a los conjuntos \(\{a, b\}, \{b, c\}, y \{c\}\)\ respectivamente.
-
-Tomando como solución del Exact Set Cover a $x_1$ y $x_3$.
-Obtenemos ver que satisface la fórmula, tomando como verdadero los literales de los conjuntos seleccionados de $S$ y como falso los no seleccionados.
-$x_1$ verdadero, $x_2$ falso, $x_3$ verdadero. \\
-
-La reducción de Exact Set Cover a SAT es polinomial. Esto significa que el tamaño de la fórmula booleana producida está acotado por un polinomio en el tamaño de la instancia de Exact Set Cover.
-
-\textbf{Dirección 2:} Si f es satisfacible entonces existe una cobertura exacta.
+Demostremos que es Exact Set Cover es NP-Hard. Para ello vamos a utilizar una reducción de un problema conocido que sabemos que es NP-Hard a este.
+Utilizaremos SAT, en este problema se tiene  una expresión booleana en forma normal conjuntiva.
 
 Dada una instancia de SAT:
 
@@ -155,85 +122,122 @@ f = $C_1$ $\wedge$ $C_2$ $\wedge$ \dots $\wedge$ $C_n$
 donde $C_i$ = \{ $x_{i1}$ $\vee$ $x_{i2}$ $\vee$ \dots $\vee$ $x_{ik}$\}
 y \(x_{i,j}\)=\{ True or False, de la forma $\neg$$x_{i,j}$ o $x_{i,j}$\}\\
 
-\textbf{Crearemos una instancia de Exact Set Cover}
+Definamos un conjunto \(U\) y una familia de subconjuntos \(F\).
 
-Definamos un conjunto \(E\) y una familia de subconjuntos \(F\), tal que existe una cobertura exacta de \(E\) en \(F\) si la fórmula es satifacible.
-
-El conjunto universo \(E\) consistirá de 3 tipos de elementos:
+El conjunto universo \(U\) consistira de 3 tipos de elementos:
 
 \begin{itemize}
     \item $x_i$: por cada variable i
     \item $C_j$:: por cada cláusula j
-    \item $p_{i,j}$ por cada aparición de la variable i en la cláusula j
-\end{itemize}
+    \item $p_{i,j}$ por cada aparición de la variable i en la cláusula j \\
+\end{itemize} 
+
+
 
 Para el conjunto \(F\) tendremos:
+\begin{itemize}
+    \item Por cada variable i creamos dos conjuntos, el conjunto verdadero $x_{i}^{T}$ y el conjunto falso $x_{i}^{F}$. El conjunto verdadero contiene $x_i$ en conjunto a las apariciones de \(i\) en cada cláusula \(j\) donde aparezca negada(los $p_{i,j}$ donde $i$ sea falso) y el conjunto falso contiene $x_i$ junto a las apariciones de \(i\) en cada cláusula \(j\) donde no aparezca negada (los $p_{i,j}$ donde $i$ sea verdadero).\\
 
-Por cada variable i creamos dos conjuntos, el conjunto verdadero $x_{i}^{T}$ y el conjunto falso $x_{i}^{F}$. El conjunto verdadero contiene $x_i$ en conjunto a las apariciones de \(i\) en cada cláusula \(j\) donde aparezca negada $p_{i,j}$ y el conjunto falso contiene $x_i$ en conjunto a las apariciones de \(i\) en cada cláusula \(j\) donde no aparezca negada $p_{ij}$.\\
+    \textbf{Ejemplo:} Si $x_1$ aparece en la cláusula 2 y $\neg$$x_1$ aparece en las clausulas 3 y 4 creamos los conjuntos:
 
-\textbf{Ejemplo:} Si $x_1$ aparece en la cláusula 2 y $\neg$$x_1$ aparece en las cláusulas 3 y 4 creamos los conjuntos:
+    $x_{1}^{T}$ = \{$x_1$,$p_{1,2}$\} y $x_{1}^{F}$ = \{$x_1$,$p_{1,3}$,$p_{1,4}$\}\\
+    \item Por cada elemento $p_{i,j}$ creamos un conjunto \{$C_j$, $p_{i,j}$\}
+    \item Luego por cada $p_{i,j}$ crearemos subconjuntos por cada uno donde sea su único elemento. $\{p_{i.j}\}$.
+\end{itemize}
 
-$x_{1}^{T}$ = \{$x_1$,$p_{1,2}$\} y $x_{1}^{F}$ = \{$x_1$,$p_{1,3}$,$p_{1,4}$\}\\
 
-Por cada elemento $p_{i,j}$ creamos un conjunto \{$C_j$, $p_{i,j}$\} y otro solo con \{$p_{i,j}$\}.
 
-Como los conjuntos verdaderos y falsos son los únicos que contienen el elemento $x_i$, por cada variable $i$, una solución de Exact Set Cover debe contener exactamente uno de los correspondientes conjuntos verdaderos o falsos. Esto da una relación entre los conjuntos verdaderos/falsos seleccionados en las soluciones del Exact Set Cover y las variables asignadas a las instancias de SAT.
-
-Además, cualquier solución de Exact Set Cover debe, para cada cláusula j, contener para algunos i el conjunto \{$C_j$, $p_{i,j}$\}.
-
-Si \(i\) es un literal positivo en la cláusula \(j\), esto significa el conjunto falso para la variable \(i\) no puede estar en la solución, ya que también contiene $p_{i,j}$. De manera similar, si \(i\) es un literal negado en la cláusula \(j\), no podemos haber seleccionado el conjunto verdadero para la variable \(i\). Por tanto, la variable \(i\) satisface la cláusula \(j\) en la asignación de variables correspondientes a los conjuntos verdadero/falso de variables seleccionadas.
-Por el contrario, dada una asignación satisfactoria a la instancia SAT, podemos simplemente seleccionar los conjuntos de variables verdadero/falso correspondientes a la asignación.
-
-Para cada cláusula podemos seleccionar cualquier conjunto \{$C_j$, $p_{i,j}$\} por lo cual \(i\) es un literal satisfactorio de la cláusula \(j\). Esto cubre los $x_i$ y los $C_j$. El resto de los $p_{i,j}$ pueden estar cubiertos por los conjuntos independientes de estos.\\
-
-\textbf{Ejemplo}:
+\textbf{Ejemplo de la construción}:
 
 $f = $   \{ $x_{1}$ $\vee$ $x_{2}$ $\vee$ $\neg$ $x_{3}$\} $\wedge$ \{ $\neg$ $x_{1}$ $\vee$ $x_{2}$ $\vee$ $x_{3}$\}
 
 Creamos los conjuntos verdaderos y falsos
 
-$x_{1}^{T}$ = \{$x_1$, $p_{1,2}$\}
-$x_{1}^{F}$ = \{$x_1$, $p_{1,1}$\}
-$x_{2}^{T}$ = \{$x_2$\}
-$x_{2}^{F}$ = \{$x_2$, $p_{2,1}$, $p_{2,2}$\}
-$x_{3}^{T}$ = \{$x_3$, $p_{3,1}$\}
-$x_{3}^{F}$ = \{$x_3$, $p_{3,2}$\}
+\begin{itemize}
+    \item $x_{1}^{T}$ = \{$x_1$, $p_{1,2}$\}
+    \item $x_{1}^{F}$ = \{$x_1$, $p_{1,1}$\}
+    \item $x_{2}^{T}$ = \{$x_2$\}
+    \item $x_{2}^{F}$ = \{$x_2$, $p_{2,1}$, $p_{2,2}$\}
+    \item $x_{3}^{T}$ = \{$x_3$, $p_{3,1}$\}
+    \item $x_{3}^{F}$ = \{$x_3$, $p_{3,2}$\}
+\end{itemize}
 
 Creamos los conjuntos de cláusulas con sus $p_{i,j}$
 
-\{$C_1$, $p_{1,1}$\}, \{$C_1$, $p_{2,1}$\}, \{$C_1$, $p_{3,1}$\}
-\{$C_2$, $p_{1,2}$\}, \{$C_2$, $p_{2,2}$\}, \{$C_2$, $p_{3,2}$\}
-\{$C_3$, $p_{1,3}$\}, \{$C_3$, $p_{2,3}$\}, \{$C_3$, $p_{3,3}$\}
+\begin{itemize}
+    \item \{$C_1$, $p_{1,1}$\}, \{$C_1$, $p_{2,1}$\}, \{$C_1$, $p_{3,1}$\}
+    \item \{$C_2$, $p_{1,2}$\}, \{$C_2$, $p_{2,2}$\}, \{$C_2$, $p_{3,2}$\}
+    \item \{$C_3$, $p_{1,3}$\}, \{$C_3$, $p_{2,3}$\}, \{$C_3$, $p_{3,3}$\}
+\end{itemize}
 
-y los conjuntos independientes de $p_{i,j}$
+y los conjuntos independientes de $p_{i,j}$: \\
 
-$p_{1,1}$, $p_{1,2}$, $p_{1,3}$, $p_{2,1}$, $p_{2,2}$ ,$p_{2,3}$, $p_{3,1}$, $p_{3,2}$,$p_{3,3}$
+$\{p_{1,1}\}$, $\{p_{1,2}\}$, $\{p_{1,3}\}$, $\{p_{2,1}\}$, $\{p_{2,2}\}$, $\{p_{2,3}\}$, $\{p_{3,1}\}$, $\{p_{3,2}\}$,$\{p_{3,3}\}$. \\
 
-Sea
+Sea el conjunto
 \begin{multline}
     F = \{ \{p_{1,1}\}, \{p_{2,1}\},\{p_{3,1}\},\{p_{1,2}\},\{p_{2,2}\},
-    \{p_{3,2}\},\{p_{1,3}\}, \{p_{2,3}\},\{p_{3,3}\}, x_{1}^{T},
+    \{p_{3,2}\},\{p_{1,3}\}, \{p_{2,3}\},\{p_{3,3}\}, x_{1}^{T}, 
     x_{1}^{F}, x_{2}^{T}, x_{2}^{F}, x_{3}^{T}, x_{3}^{F},\\
     \{C_1, p_{1,1}\}, \{C_1, p_{2,1}\}, \{C_1, p_{3,1}\}
     \{C_2, p_{1,2}\}, \{C_2, p_{2,2}\}, \{C_2, p_{3,2}\} \{C_3, p_{1,3}\},
     \{C_3, p_{2,3}\}, \{C_3, p_{3,3}\}\}\
-\end{multline}
+\end{multline} 
 
 Sea el universo
 
-\[A = \{x_1, x_2, x_3, C_1, C_2, p_{1,1}, p_{1,2}, p_{1,3}, p_{2,1}, p_{2,2} ,p_{2,3}, p_{3,1}, p_{3,2}, p_{3,3}\}\]
+\[U = \{x_1, x_2, x_3, C_1, C_2, p_{1,1}, p_{1,2}, p_{1,3}, p_{2,1}, p_{2,2} ,p_{2,3}, p_{3,1}, p_{3,2}, p_{3,3}\}\]
 
-Dada una solución cualquiera de SAT, sea esta
+
+Definamos una instancia de Exact Set Cover donde el conjunto universo sera representado por el conjunto \(U\) y el conjunto de subconjuntos por \(F\).
+Tendremos que:
+\[U = \{ x_i, C_j, p_{i,j}\}\]
+
+\[F = \{x_{i}^{T}, x_{i}^{F}, \{C_j, p_{i,j}\}, \{p_{i,j}\}\}\]
+
+para  $0 \leq i \leq n$ y  $0 \leq j \leq k$. \\
+
+Vamos a demostrar que si se tiene una asignacion de las variables que satisface la expresión(o sea, que resuelve SAT), entonces existe un subconjunto $T \subseteq F$ que satisface la instancia de Exact Set Cover que se creo. \\
+
+Teniendo la asignación que resuelve SAT vamos a armar un subconjunto:
+\begin{itemize}
+    \item Tomamos el conjunto $x_{i}^{T}$ o $x_{i}^{F}$ dependiendo si $x_i$ es verdadero o falso.
+    \item Tomamos los conjuntos ${C_j, p_{i,j}}$ dependiendo si $x_i$ se encuentra en la cláusula $j$.
+    \item Tomamos los conjuntos $p_{i,j}$ de los restantes $x_i$ ya que solo podemos escoger $k$ de los subconjuntos ${C_j, p_{i,j}}$, por ser $k$ la cantidad de cláusulas. Para evitar la interseccion entre conjuntos. \\
+\end{itemize}
+
+\textbf{Podemos ver que}:
+\begin{itemize}
+    \item Construimos un subconjunto que forma el universo ya que al escoger los conjuntos $x_{i}^{T}$ o $x_{i}^{F}$, obtenemos todos los $x_i$ y los $p_{i,j}$, donde era falso o verdadero respectivamente. Luego obtenemos los $C_j$ de los ${C_j, p_{i,j}}$ y los $p_{i,j}$ donde se encontraban los $x_i$ y luego completamos con los $p_{i,j}$ restantes.
+    \item Los subconjuntos son disjuntos entre sí ya que al escoger los $x_{i}^{T}$ o $x_{i}^{F}$ se escogen los $p_{i,j}$ donde es falso o verdadero respectivamente pues no habrá intersección con los $p_{i,j}$ escogidos en ${C_j, p_{i,j}}$ pues se seleccionarán donde aparece ese $x_i$ en su respectiva cláusula que es lo contrario de los $x_{i}^{T}$ o $x_{i}^{F}$. \\
+\end{itemize}
+
+\textbf{Ejemplo de solución:}
+
+Dada una solución cualquiera de SAT, sea esta:
 \[s = \neg x_1 \wedge x_2 \wedge x_3\]
 
-cubriremos el universo, dando como resultado el subconjunto
-\[S = \{ x_{2}^{T}, x_{1}^{F}, x_{3}^{T}, \{C_1, p_{2,1}\}, \{C_2, p_{1,2}\}, \{p_{2,2}\}, \{p_{3,2}\} \}\]
+cubriremos el universo, dando como resultado el subconjunto 
+\[T = \{ x_{2}^{T}, x_{1}^{F}, x_{3}^{T}, \{C_1, p_{2,1}\}, \{C_2, p_{1,2}\}, \{p_{2,2}\}, \{p_{3,2}\} \}\]
 
- Podemos observar que son disjuntos y hacen un cubrimiento completo del universo.
+Por tanto queda demostrado que si existe una solución al problema SAT podemos construir a partir de esta una solución al Exact Set Cover en tiempo polinomial. 
 
-Con estas dos reducciones podemos demostrar que estos problemas son equivalentes.
+Ahora vamos a hacer la demostración en el otro sentido.
+Demostremos que si existe una solución de Exact Set Cover entonces podemos contruir una solución para SAT.
 
-Hemos demostrado que el enigma de los subuniversos es NP-Completo.
+Teniendo un subconjunto $T \subseteq F$ que de foma que la union de sus elementos formen el universo y no exista intersección entre ellos. Sea esta una solución de Exact Set Cover.
+
+\begin{itemize}
+    \item Asignamos verdadero a $x_i$  si aparece $x_{i}^{T}$ en el subconjunto, mientras que asignamos falso a $x_i$ si aparece $x_{i}^{F}$.
+    \item Luego verificamos las clausulas, donde por cada clausula $C_j$ al menos uno de los conjuntos ${C_j, p_{i,j}}$ debe aparecer en $T$. Si $C_j$ no esta cubierta por ninguno de estos conjuntos entonces la fórmula SAT no es satisfacible.
+\end{itemize}
+
+De modo general tenemos que en cada cláusula debe haber una variable en verdadero, lo que hace que se satisfaga la ecuación y por tanto la asignacion realizada resuelve el SAT.
+
+La solución de Exact Set Cover proporciona una cobertura exacta del universo, lo que permite determinar directamente los valores de verdad de las variables en la fórmula SAT original.
+
+Finalmente hemos demostrado que se puede construir una solucion para SAT a partir de una para Exact Set Cover en tiempo polinomial, como SAT es NP-Hard entonces Exact Set Cover es NP-Hard.
+Finalmente como Exact Set Cover es NP y NP-Hard es también NP-Completo.
 
 
 \subsection{Algoritmo}
@@ -270,9 +274,29 @@ def exact_set_cover(universe, subsets):
 
 Podemos ver que es un algoritmo bastante sencillo pero ineficiente ya que recorre todos los posibles subconjuntos.\\
 
+\textbf{Análisis de Complejidad}
+
+\begin{itemize}
+    \item Búsqueda exhaustiva: La función backtrack explora todas las posibles combinaciones de subconjuntos. En el peor caso, esto implica considerar $2^n$ combinaciones, donde n es el número de subconjuntos.
+    \item Verificación de cobertura: En cada llamada recursiva de backtrack, se verifica si la unión de los subconjuntos seleccionados cubre el universo. Esto puede requerir hasta $O(n * m)$ operaciones, donde m es el número de elementos en el universo.
+\end{itemize}
+
+La complejidad temporal total de la solución de fuerza bruta es $O(2^n * n * m)$.\\
+
 \textbf{Greedy Conjunto de Mayor Tamaño}
 
-Como el anterior es muy ineficiente para mejorar la eficiciencia del algoritmo usamos un enfoque greedy donde siempre a la hora de agregar tomamos el conjunto con mayor cantidad de elementos. Para lograr esto ordenamos el conjunto \(S\) de mayor a menor en cuanto a longitud y realizamos backtrack.\\
+Como el anterior es muy ineficiente para mejorar la eficiciencia del algoritmo usamos un enfoque greedy donde siempre a la hora de agregar tomamos el conjunto con mayor cantidad de elementos.\\
+
+A pesar de que puede ser útil para encontrar soluciones aproximadas al problema de Exact Cover, sin embargo, no es un algoritmo polinomial en el sentido estricto y su rendimiento puede variar significativamente dependiendo de la instancia del problema.
+No garantiza optimalidad pero en este problema no se busca optimalidad.
+
+Heurística intuitiva: La idea de seleccionar en cada paso el conjunto que cubre la mayor cantidad de elementos restantes parece una estrategia lógica.
+Reducción del espacio de búsqueda: Al eliminar los elementos cubiertos en cada iteración, se reduce significativamente el espacio de búsqueda, lo que puede acelerar la búsqueda de una solución.
+
+Entonces, ¿cuándo funciona bien el algoritmo greedy para Cobertura Exacta?
+
+Conjuntos con poco solapamiento: Si los conjuntos tienen pocos elementos en común, el algoritmo greedy tiene más probabilidades de encontrar una solución rápidamente.
+Instancias "fáciles": En instancias donde la estructura de los conjuntos favorece la estrategia greedy, el algoritmo puede encontrar una solución óptima o cercana a la óptima.
 
 \textbf{Resultados:}
 
@@ -283,7 +307,5 @@ Para un universo \(U\) de 30 elementos y un conjunto \(S\) de 75 subuniversos. \
 \textbf{Greedy Conjunto Mayor Tamaño}: 0.006000041961669922ms.
 
 Podemos observar que el algoritmo greedy es más eficiente que el de backtrack.
-
-
 
 \end{document}
