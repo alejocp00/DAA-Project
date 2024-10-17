@@ -395,7 +395,7 @@ La función \texttt{min\_energy\_to\_build\_wall} tiene como objetivo igualar la
 	\item Al final, se calcula y se devuelve el costo total.
 \end{itemize}
 
-\subsubsection{Complejidad Temporal}
+\subsubsection{Complejidad temporal}
 
 La complejidad temporal del algoritmo depende de la cantidad de iteraciones del bucle principal y de las operaciones realizadas dentro de él:
 
@@ -410,7 +410,7 @@ La complejidad temporal del algoritmo depende de la cantidad de iteraciones del 
 
 Por lo tanto, la complejidad temporal total es \( O(H \cdot n) \).
 
-\subsubsection{Complejidad Espacial}
+\subsubsection{Complejidad espacial}
 
 La complejidad espacial adicional del algoritmo es \( O(1) \) porque no se utilizan estructuras de datos adicionales que escalen con la entrada, ya que la lista \texttt{heights} se modifica, pero no se crea ninguna lista nueva que dependa de la entrada. El algoritmo recibe un arreglo para almacenar las alturas de las columnas, lo que requiere \( O(n) \) de espacio. La complejidad espacial total es \( O(n) \).
 
@@ -465,7 +465,7 @@ def min_energy_to_build_wall_optimized(heights, c, d, m):
 	return cost
 \end{lstlisting}
 
-\subsubsection{Explicación del Código}
+\subsubsection{Explicación del código}
 
 El código \texttt{min\_energy\_to\_build\_wall\_optimized} optimiza el costo energético de igualar las alturas de las columnas de un muro. Solo se diferencia de la solución a en lo siguiente:
 
@@ -476,7 +476,7 @@ El código \texttt{min\_energy\_to\_build\_wall\_optimized} optimiza el costo en
 	\item \texttt{floor\_missing\_count = len(heights) - row\_block\_count[min\_height + 1]}: Esta línea calcula cuántas columnas están por debajo de la altura mínima + 1 y, por lo tanto, necesitan ser rellenadas (es decir, necesitan que se les construyan más bloques). \texttt{row\_block\_count[min\_height + 1]} nos dice cuántas columnas tienen altura mayor o igual a \texttt{min\_height + 1}. Si restamos este valor del número total de columnas (\texttt{len(heights)}), obtenemos el número de columnas cuya altura es menor o igual a \texttt{min\_height}.
 \end{itemize}
 
-\subsubsection{Complejidad Temporal}
+\subsubsection{Complejidad temporal}
 
 \begin{itemize}
 	\item \texttt{max\_height = max(heights)} y \texttt{min\_height = min(heights)} tardan \(O(n)\), donde \(n\) es el número de columnas en \texttt{heights}.
@@ -491,7 +491,7 @@ Por lo tanto, la complejidad del bucle principal es \(O(h_{\text{max}} - h_{\tex
 
 \textbf{Complejidad total:} La complejidad total es \(O(n + h_{\text{max}})\).
 
-\subsubsection{Complejidad Espacial}
+\subsubsection{Complejidad espacial}
 
 El espacio para el arreglo \texttt{row\_block\_count}:
 El espacio adicional más significativo es el arreglo \texttt{row\_block\_count}, que tiene un tamaño \(O(h_{\text{max}})\), donde \(h_{\text{max}}\) es la altura máxima de las columnas.
@@ -672,7 +672,7 @@ O(n + \texttt{max\_height})
 
 \section{Solución por Backtracking}
 
-
+\subsection{Código en Python}
 \begin{lstlisting}
 def min_energy_to_build_wall_backtrack(heights, c, d, m):
 	mask = [0] * len(heights)
@@ -731,15 +731,15 @@ def min_energy_to_build_wall_backtrackR(heights, c, d, m, cost, mask, min_energy
 
 \end{lstlisting}
 
-\subsection{Estructura General del Algoritmo}
+\subsection{Estructura general del algoritmo}
 
-\subsubsection{Base de la Recursión}
+\subsubsection{Base de la recursión}
 \begin{itemize}
 	\item Si todos los elementos de \texttt{heights} son iguales (es decir, el muro está nivelado), el costo acumulado es la energía mínima actual.
 	\item Si el costo actual supera la energía mínima registrada, el algoritmo corta esa rama de búsqueda, pues no puede producir una solución mejor.
 \end{itemize}
 
-\subsubsection{Decisiones Recursivas}
+\subsubsection{Decisiones recursivas}
 El algoritmo busca todas las posibles acciones: construir, destruir, o mover bloques. Evalúa el costo de cada acción en función del costo acumulado.
 \begin{itemize}
 	\item Se selecciona la columna de menor altura para agregar un bloque, se ajusta el costo y se realiza la llamada recursiva.
@@ -753,7 +753,7 @@ El arreglo \texttt{mask} ayuda a evitar movimientos innecesarios, limitando las 
 Finalmente, el algoritmo devuelve el costo mínimo de energía entre las tres operaciones posibles.
 
 \subsection{Correctitud}
-\subsubsection{Reducción a Subproblemas}
+\subsubsection{Reducción a subproblemas}
 En cada paso recursivo, el algoritmo explora todas las posibles maneras de igualar las alturas: construir, destruir o mover bloques. Dado que explora todas las combinaciones posibles de movimientos mediante backtracking, asegura que, en algún punto, alcanzará una configuración donde todas las columnas sean iguales y retorna el costo acumulado.
 
 \subsubsection{Observaciones}
@@ -785,4 +785,99 @@ Por lo tanto, la complejidad espacial es \( O(n) \), donde \( n \) es el número
 \subsection{Conclusiones}
 El algoritmo propuesto utiliza backtracking para encontrar la forma óptima de igualar las alturas de un muro, minimizando el costo de energía. Aunque es correcto y garantiza una solución óptima, su complejidad temporal crece exponencialmente con el número de columnas, lo que puede hacerlo impráctico para grandes valores de \( n \). Sin embargo, la técnica es efectiva para problemas pequeños y asegura la minimización del costo energético a través de la exploración exhaustiva del espacio de soluciones.
 
+\section{Solución por búsqueda ternaria}
+
+\subsection{Código en Python}
+\begin{lstlisting}
+import bisect
+
+def min_energy_to_build_wall_ternary_search(heights, c, d, m):
+	n = len(heights)
+	heights.sort()
+	prefix_sums = [0] * (n + 1)
+	for i in range(n):
+		prefix_sums[i + 1] = prefix_sums[i] + heights[i]
+
+	min_height = heights[0]
+	max_height = heights[-1]
+
+	def compute_cost(H):
+		pos = bisect.bisect_left(heights, H)
+		build_needed = H * pos - prefix_sums[pos]
+		destroy_needed = prefix_sums[n] - prefix_sums[pos] - H * (n - pos)
+		if m < c + d:
+			x = min(build_needed, destroy_needed)
+			cost = x * m + (build_needed - x) * c + (destroy_needed - x) * d
+		else:
+			cost = build_needed * c + destroy_needed * d
+		return cost
+
+	left = min_height
+	right = max_height
+	min_cost = compute_cost(heights[0])
+	while left <= right:
+		mid1 = left + (right - left) // 3
+		mid2 = right - (right - left) // 3
+		cost1 = compute_cost(mid1)
+		cost2 = compute_cost(mid2)
+		min_cost = min(min_cost, cost1, cost2)
+		if cost1 < cost2:
+			right = mid2 - 1
+		else:
+			left = mid1 + 1
+	return min_cost
+
+\end{lstlisting}
+
+
+\subsection{Explicación del código}
+
+\begin{itemize}
+	\item \textbf{Importación de bisect}: Utilizamos el módulo \texttt{bisect} para realizar búsquedas binarias eficientes.
+	\item \textbf{Ordenamiento y preprocesamiento}:
+	\begin{itemize}
+		\item Ordenamos el arreglo \texttt{heights}: Ordenamos el arreglo de alturas para facilitar el cálculo de sumas acumulativas y la búsqueda binaria.
+		\item Calculamos las sumas acumulativas en \texttt{prefix\_sums}: Calculamos las sumas acumulativas de las alturas para poder obtener rápidamente la suma de alturas hasta cualquier posición.
+	\end{itemize}
+	\item \textbf{Función \texttt{compute\_cost}}:
+	\begin{itemize}
+		\item Calcula el costo total para una altura dada \texttt{H} utilizando las sumas y conteos preprocesados. Mantenemos un conteo acumulativo de las columnas para determinar cuántas tienen alturas menores o iguales a un valor dado.
+		\item Determina si es más eficiente mover bloques o construir/destruir.
+	\end{itemize}
+	\item \textbf{Búsqueda ternaria}:
+	\begin{itemize}
+		\item Realizamos la búsqueda ternaria en el rango de alturas posibles.
+		\item En cada iteración, calculamos los costos en dos puntos medios y ajustamos el rango según cuál costo es menor.
+		\item Actualizamos \texttt{min\_cost} con el costo mínimo encontrado.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Correctitud}
+
+\textbf{Función de costo convexa}: La función de costo total al ajustar todas las columnas a una altura $H$ es convexa respecto a $H$. Esto significa que podemos utilizar búsqueda ternaria para encontrar el valor óptimo de $H$ que minimiza el costo.
+
+\subsection{Optimalidad}
+
+\begin{itemize}
+	\item \textbf{Uso eficiente de movimientos}: La estrategia prioriza mover bloques cuando es más barato que construir y destruir.
+	\item \textbf{Minimización global}: Al buscar la altura $H$ que minimiza el costo total, garantizamos que no hay otra altura que resulte en un costo menor.
+\end{itemize}
+
+\subsection{Complejidad temporal}
+
+\begin{itemize}
+	\item \textbf{Ordenamiento}: $O(n \log n)$ debido al ordenamiento inicial del arreglo de alturas.
+	\item \textbf{Preprocesamiento}: $O(n)$ para calcular las sumas acumulativas.
+	\item \textbf{Búsqueda ternaria}:
+	\begin{itemize}
+		\item El número de iteraciones es $O(\log H)$, donde $H$ es el rango de alturas posibles.
+		\item En cada iteración, el cálculo del costo es $O(\log n)$ debido a la búsqueda binaria para encontrar la posición $pos$.
+	\end{itemize}
+	\item \textbf{Complejidad total}: $O(n \log n + \log H \log n)$.
+	\begin{itemize}
+		\item Dado que $H$ puede ser grande pero es una constante en comparación con $n$, la complejidad puede considerarse $O(n \log n)$ en la práctica.
+	\end{itemize}
+\end{itemize}
+
 \end{document}
+
